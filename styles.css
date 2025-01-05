@@ -4,49 +4,53 @@ body {
     margin: 0;
     padding: 0;
     user-select: none;
-    background-color: #222222;
-    color: #ffffff;
+    background-color: #0d1117; 
+    color: #c9d1d9; 
 }
 
 #tools {
     display: flex;
     width: 100%;
     height: 3%;
-    background-color: #444444;
+    background-color: #161b22; 
     align-items: start;
     justify-content: left;
 }
 
 #tools * {
-    border: 0.1px solid #888888;
+    border: 0.1px solid #30363d;  
     margin-left: 4px;
     user-select: none;
-    color: #ffffff;
-    background-color: #444444;
+    color: #c9d1d9;
+    background-color: #161b22;
 }
 
 #content {
     width: 100%;
     height: 87%;
-    background-color: #222222;
+    background-color: #0d1117;
 }
 
-/* Remove any default list styling */
+
 .sidebar .style-container {
-    list-style-type: none; /* Prevent list numbering or bullet points */
-    margin: 10px 0; /* Optional: space out each style input */
+    list-style-type: none;
+    margin: 10px 0;
 }
 
-/* Ensure label and input elements are styled properly */
+ 
 .sidebar label {
-    display: block; /* Make sure the label is on its own line */
-    margin-bottom: 5px; /* Space between label and input */
-    font-weight: bold; /* Optional: Make label bold */
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #c9d1d9;
 }
 
 .sidebar input {
-    width: 100%; /* Make input elements fill the available width */
+    width: 100%;
     margin-top: 5px;
+    background-color: #161b22;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
 }
 
 #timeline {
@@ -54,23 +58,23 @@ body {
     width: 100%;
     z-index: 4;
     height: 10%;
-    background-color: #444444;
+    background-color: #161b22;
 }
 
 #pauseButton {
     position: absolute;
     float: left;
     transform: translate(0, 12.5%);
-    width: 50px; /* Initial size */
-    height: 50px; /* Initial size */
-    background-color: #ff0000; /* Red color for the pause button */
-    border-radius: 50%; /* Make it a circle */
+    width: 50px;
+    height: 50px;
+    background-color: #d73a49;
+    border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    border: 2px solid #ffffff;
-    transition: width 0.2s ease, height 0.2s ease; /* Smooth scaling effect */
+    border: 2px solid #c9d1d9;
+    transition: width 0.2s ease, height 0.2s ease;
 }
 
 #durationRod {
@@ -80,7 +84,7 @@ body {
     top: 50%;
     transform: translateY(-50%);
     margin: auto;
-    background-color: #888888;
+    background-color: #30363d;
     border-radius: 25px;
     overflow: hidden;
 }
@@ -92,7 +96,7 @@ body {
     top: 50%;
     left: 5%;
     transform: translate(0, -50%);
-    background-color: #eff243;
+    background-color: #58a6ff;
     cursor: grab;
 }
 
@@ -109,14 +113,17 @@ body {
     position: relative;
     margin: 0;
     padding: 0;
-    background-color: #111111;
+    overflow: hidden;
+    background-color: #0d1117;
 }
+
+
 
 #itemCatalog {
     width: 90%;
     height: 90%;
-    background-color: #222222;
-    border: 1px solid #444444;
+    background-color: #0d1117;
+    border: 1px solid #30363d;
     display: block;
     margin: 0;
     padding: 0;
@@ -128,11 +135,11 @@ body {
     text-align: center;
     height: 10%;
     font-size: 100%;
-    background-color: #222222;
-    border: 1.5px solid yellow;
+    background-color: #0d1117;
+    border: 1.5px solid #58a6ff;
     margin: 0;
     padding: 0;
-    color: white;
+    color: #c9d1d9;
 }
 
 #objectList {
@@ -149,36 +156,28 @@ body {
     height: auto;
     margin: 0;
     padding-bottom: 4px;
-    background-color: #444444;
+    background-color: #161b22;
 }
 
 #objectList li:hover {
-    background-color: #555555;
+    background-color: #21262d;
 }
 
-#playback {
-    position: relative;
-    width: 100%; /* Ensure it scales with the window */
-    height: 100%; /* Ensure it scales with the window */
-    overflow: hidden; /* Keep objects within bounds */
-    background-color: #f0f0f0; /* Optional for visibility */
-}
-
-.rectangle {
+.rectangle, .ellipse {
     position: absolute;
     background-color: #3498db;
-    transform: translate(-50%, -50%); /* Center to its coordinates */
+    transform: translate(-50%, -50%);
 }
 
 #sidebar {
     position: fixed;
     right: 0;
     top: 0;
-    height: 100%;
+    height: 90%;
     width: 20%;
-    background-color: #333333;
-    border-left: 1px solid #444444;
-    overflow: hidden;
+    background-color: #161b22;
+    border-left: 1px solid #30363d;
+    overflow-y: scroll;
     z-index: 1;
     transition: width 0.3s ease;
     display: flex;
@@ -188,7 +187,7 @@ body {
 }
 
 #sidebar.collapsed {
-    width: 25px;
+    width: 50px;
 }
 
 #sidebar.collapsed input {
@@ -205,18 +204,18 @@ body {
     left: 5px;
     width: 20px;
     height: 40px;
-    background-color: #444444;
-    color: #000000;
+    background-color: #21262d;
+    color: #c9d1d9;
     text-align: center;
     line-height: 40px;
     font-size: 16px;
     cursor: pointer;
-    border: 1px solid #555555;
+    border: 1px solid #30363d;
     border-radius: 4px 0 0 4px;
 }
 
 #sidebar * {
     margin: 10px 0;
-    color: #000000;
+    color: #c9d1d9;
     text-align: center;
 }

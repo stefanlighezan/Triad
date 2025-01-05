@@ -4,12 +4,15 @@ import { Objects, TriadObject } from "./dist/TriadObject.js";
 import { Animation } from "./dist/Animation.js";
 import { Renderable } from "./dist/Renderable.js";
 import { Vector2 } from "./dist/Vector2.js";
-import { Rectangle } from "./dist/Shapes.js";
+import { Rectangle, Ellipse } from "./dist/Shapes.js";
 import { Lifecycle } from "./dist/Lifecycle.js";
 import {
     BorderColor,
     FillColor,
     Opacity,
+    rotX,
+    rotY,
+    rotZ,
     StyleProperties,
     zIndex,
 } from "./dist/Style.js";
@@ -35,6 +38,9 @@ const timeline = new Timeline(
 let sceneObjects = [];
 let selectedObject = null;
 
+let isDraggingObject = false;
+let dragOffset = { x: 0, y: 0 };
+
 function instantiateTriadObject(key) {
     let lifecycle = new Lifecycle(0, video.totalFrames);
     let renderable = new Renderable(
@@ -48,6 +54,9 @@ function instantiateTriadObject(key) {
         new FillColor(StyleProperties.fillColor, "#00ff00"),
         new Opacity(StyleProperties.opacity, 0.5),
         new zIndex(StyleProperties.zIndex, 10),
+        new rotX(StyleProperties.rotX, 0),
+        new rotY(StyleProperties.rotY, 0),
+        new rotZ(StyleProperties.rotZ, 0),
     ];
     let triadObject = null;
     switch (Objects[key]) {
@@ -61,6 +70,13 @@ function instantiateTriadObject(key) {
             );
             break;
         case 1:
+            triadObject = new Ellipse(
+                lifecycle,
+                renderable,
+                animation,
+                playback,
+                styles
+            );
             break;
         case 2:
             break;
@@ -72,19 +88,48 @@ function instantiateTriadObject(key) {
         triadObject.render(video.currentFrame);
         sceneObjects.push(triadObject);
         selectedObject = triadObject;
+
+        triadObject.instance.addEventListener("mousedown", (e) => {
+            isDraggingObject = true;
+            dragOffset.x = e.clientX - triadObject.renderable.position.x;
+            dragOffset.y = e.clientY - triadObject.renderable.position.y;
+            selectedObject = triadObject;
+            updateSidebar();
+            video.pause();
+        });
+
+        document.addEventListener("mousemove", (e) => {
+            if (isDraggingObject && selectedObject === triadObject) {
+                const newX = e.clientX - dragOffset.x;
+                const newY = e.clientY - dragOffset.y;
+                triadObject.renderable.position = new Vector2(newX, newY);
+                triadObject.render(video.currentFrame);
+            }
+        });
+
+        document.addEventListener("mouseup", () => {
+            if (isDraggingObject) {
+                isDraggingObject = false;
+                video.unpause();
+            }
+        });
+
+        triadObject.instance.addEventListener("click", () => {
+            selectedObject = triadObject;
+            updateSidebar();
+        });
         updateSidebar();
     }
 }
 
+
 function updateSidebar() {
     if (!selectedObject) return;
 
-    // Preserve the sidebar toggle button
     const sidebarToggleClone = sidebar.querySelector("#sidebarToggle");
     sidebar.innerHTML = "<h3>Object Properties</h3>";
     sidebar.appendChild(sidebarToggleClone);
 
-    // Add start and end frame inputs once
     const startInput = document.createElement("input");
     startInput.type = "number";
     startInput.value = selectedObject.lifespan.start;
@@ -103,7 +148,6 @@ function updateSidebar() {
     });
     sidebar.appendChild(endInput);
 
-    // Add position inputs once
     const positionInputs = ["x", "y"].map((axis) => {
         const input = document.createElement("input");
         input.type = "number";
@@ -119,7 +163,6 @@ function updateSidebar() {
     });
     positionInputs.forEach((input) => sidebar.appendChild(input));
 
-    // Add dimensions inputs once
     const dimensionInputs = ["x", "y"].map((axis) => {
         const input = document.createElement("input");
         input.type = "number";
@@ -135,7 +178,6 @@ function updateSidebar() {
     });
     dimensionInputs.forEach((input) => sidebar.appendChild(input));
 
-    // Add style-specific inputs
     selectedObject.style.forEach((style) => {
         const container = document.createElement("div");
         container.classList.add("style-container");
@@ -178,6 +220,66 @@ function updateSidebar() {
                     selectedObject.render(video.currentFrame);
                 });
                 break;
+                case StyleProperties.zIndex:
+                    input = document.createElement("input");
+                    input.type = "range";
+                    input.min = "0";
+                    input.max = "10";
+                    input.step = "1";
+                    input.value = style.value;
+                    input.addEventListener("input", (e) => {
+                        style.value = parseInt(e.target.value, 10);
+                        selectedObject.render(video.currentFrame);
+                    });
+                    break;
+                    case StyleProperties.zIndex:
+                        input = document.createElement("input");
+                        input.type = "range";
+                        input.min = "0";
+                        input.max = "10";
+                        input.step = "1";
+                        input.value = style.value;
+                        input.addEventListener("input", (e) => {
+                            style.value = parseInt(e.target.value, 10);
+                            selectedObject.render(video.currentFrame);
+                        });
+                        break;
+                    case StyleProperties.rotX:
+                        input = document.createElement("input");
+                        input.type = "range";
+                        input.min = "0";
+                        input.max = "360";
+                        input.step = "1";
+                        input.value = style.value;
+                        input.addEventListener("input", (e) => {
+                            style.value = parseInt(e.target.value, 10);
+                            selectedObject.render(video.currentFrame);
+                        });
+                        break;
+                    case StyleProperties.rotY:
+                        input = document.createElement("input");
+                        input.type = "range";
+                        input.min = "0";
+                        input.max = "360";
+                        input.step = "1";
+                        input.value = style.value;
+                        input.addEventListener("input", (e) => {
+                            style.value = parseInt(e.target.value, 10);
+                            selectedObject.render(video.currentFrame);
+                        });
+                        break;
+                    case StyleProperties.rotZ:
+                        input = document.createElement("input");
+                        input.type = "range";
+                        input.min = "0";
+                        input.max = "360";
+                        input.step = "1";
+                        input.value = style.value;
+                        input.addEventListener("input", (e) => {
+                            style.value = parseInt(e.target.value, 10);
+                            selectedObject.render(video.currentFrame);
+                        });
+                        break;
 
             default:
                 break;

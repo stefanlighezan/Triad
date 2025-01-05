@@ -15,9 +15,18 @@ export class Opacity extends Style {}
 
 export class zIndex extends Style {}
 
+export class rotX extends Style {}
+
+export class rotY extends Style {}
+
+export class rotZ extends Style {}
+
 export enum StyleProperties {
     borderColor,
     fillColor,
     opacity,
     zIndex,
+    rotX,
+    rotY,
+    rotZ,
 }
