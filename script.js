@@ -1,7 +1,8 @@
 import { Timeline } from "./dist/Timeline.js";
 import { Video } from "./dist/Video.js";
 import { Objects, TriadObject } from "./dist/TriadObject.js";
-import { Animation } from "./dist/Animation.js";
+import { Animations } from "./dist/Animations.js";
+import { Animation, AnimationType } from "./dist/Animation.js";
 import { Renderable } from "./dist/Renderable.js";
 import { Vector2 } from "./dist/Vector2.js";
 import { Rectangle, Ellipse } from "./dist/Shapes.js";
@@ -48,7 +49,7 @@ function instantiateTriadObject(key) {
         new Vector2(50, 50),
         key
     );
-    let animation = new Animation();
+    let animation = new Animations([]);
     let styles = [
         new BorderColor(StyleProperties.borderColor, "#ff0000"),
         new FillColor(StyleProperties.fillColor, "#00ff00"),
@@ -121,7 +122,6 @@ function instantiateTriadObject(key) {
         updateSidebar();
     }
 }
-
 
 function updateSidebar() {
     if (!selectedObject) return;
@@ -220,66 +220,45 @@ function updateSidebar() {
                     selectedObject.render(video.currentFrame);
                 });
                 break;
-                case StyleProperties.zIndex:
-                    input = document.createElement("input");
-                    input.type = "range";
-                    input.min = "0";
-                    input.max = "10";
-                    input.step = "1";
-                    input.value = style.value;
-                    input.addEventListener("input", (e) => {
-                        style.value = parseInt(e.target.value, 10);
-                        selectedObject.render(video.currentFrame);
-                    });
-                    break;
-                    case StyleProperties.zIndex:
-                        input = document.createElement("input");
-                        input.type = "range";
-                        input.min = "0";
-                        input.max = "10";
-                        input.step = "1";
-                        input.value = style.value;
-                        input.addEventListener("input", (e) => {
-                            style.value = parseInt(e.target.value, 10);
-                            selectedObject.render(video.currentFrame);
-                        });
-                        break;
-                    case StyleProperties.rotX:
-                        input = document.createElement("input");
-                        input.type = "range";
-                        input.min = "0";
-                        input.max = "360";
-                        input.step = "1";
-                        input.value = style.value;
-                        input.addEventListener("input", (e) => {
-                            style.value = parseInt(e.target.value, 10);
-                            selectedObject.render(video.currentFrame);
-                        });
-                        break;
-                    case StyleProperties.rotY:
-                        input = document.createElement("input");
-                        input.type = "range";
-                        input.min = "0";
-                        input.max = "360";
-                        input.step = "1";
-                        input.value = style.value;
-                        input.addEventListener("input", (e) => {
-                            style.value = parseInt(e.target.value, 10);
-                            selectedObject.render(video.currentFrame);
-                        });
-                        break;
-                    case StyleProperties.rotZ:
-                        input = document.createElement("input");
-                        input.type = "range";
-                        input.min = "0";
-                        input.max = "360";
-                        input.step = "1";
-                        input.value = style.value;
-                        input.addEventListener("input", (e) => {
-                            style.value = parseInt(e.target.value, 10);
-                            selectedObject.render(video.currentFrame);
-                        });
-                        break;
+
+            case StyleProperties.rotX:
+                input = document.createElement("input");
+                input.type = "range";
+                input.min = "0";
+                input.max = "360";
+                input.step = "1";
+                input.value = style.value;
+                input.addEventListener("input", (e) => {
+                    style.value = parseInt(e.target.value, 10);
+                    selectedObject.render(video.currentFrame);
+                });
+                break;
+
+            case StyleProperties.rotY:
+                input = document.createElement("input");
+                input.type = "range";
+                input.min = "0";
+                input.max = "360";
+                input.step = "1";
+                input.value = style.value;
+                input.addEventListener("input", (e) => {
+                    style.value = parseInt(e.target.value, 10);
+                    selectedObject.render(video.currentFrame);
+                });
+                break;
+
+            case StyleProperties.rotZ:
+                input = document.createElement("input");
+                input.type = "range";
+                input.min = "0";
+                input.max = "360";
+                input.step = "1";
+                input.value = style.value;
+                input.addEventListener("input", (e) => {
+                    style.value = parseInt(e.target.value, 10);
+                    selectedObject.render(video.currentFrame);
+                });
+                break;
 
             default:
                 break;
@@ -288,14 +267,95 @@ function updateSidebar() {
         if (input) container.appendChild(input);
         sidebar.appendChild(container);
     });
+
+    const animationDiv = document.createElement("div");
+    const animationDivTitle = document.createElement("h4");
+    animationDivTitle.textContent = "Animations";
+
+    const selectAnimation = document.createElement("select");
+    Object.keys(AnimationType).forEach((key) => {
+        if (isNaN(Number(key))) {
+            // Skip numeric keys
+            const option = document.createElement("option");
+            option.value = AnimationType[key];
+            option.textContent = key;
+            selectAnimation.appendChild(option);
+        }
+    });
+
+    animationDiv.appendChild(animationDivTitle);
+    animationDiv.appendChild(selectAnimation);
+    sidebar.appendChild(animationDiv);
+
+    // Add "Add Animation" button
+    const addAnimationButton = document.createElement("button");
+    addAnimationButton.textContent = "Add Animation";
+    addAnimationButton.addEventListener("click", () => {
+        const newAnimation = new Animation(0, 5, selectAnimation.value);
+        selectedObject.animation.animations.push(newAnimation);
+
+        // Add new animation properties to the sidebar
+        const animationPropertiesDiv = document.createElement("div");
+
+        const animationTitleText = document.createElement("h4");
+        animationTitleText.textContent = `Animation #${
+            selectedObject.animation.animations.length - 1
+        }`;
+
+        const animationStartInput = document.createElement("input");
+        animationStartInput.type = "number";
+        animationStartInput.placeholder = "Start Time";
+        animationStartInput.value = newAnimation.start;
+        animationStartInput.addEventListener("input", (e) => {
+            newAnimation.start = e.target.value;
+        });
+
+        const animationDurationInput = document.createElement("input");
+        animationDurationInput.type = "number";
+        animationDurationInput.placeholder = "Duration";
+        animationDurationInput.value = newAnimation.duration;
+        animationDurationInput.addEventListener("input", (e) => {
+            newAnimation.duration = parseInt(e.target.value, 10);
+        });
+
+        animationPropertiesDiv.appendChild(animationTitleText);
+
+        animationPropertiesDiv.appendChild(animationDurationInput);
+        animationPropertiesDiv.appendChild(animationStartInput);
+        sidebar.appendChild(animationPropertiesDiv);
+    });
+
+    sidebar.appendChild(addAnimationButton);
+}
+
+function renderEverything () {
+    sceneObjects.forEach((object) => {
+        object.animation.animations.forEach((anim) => {
+            const progress = anim.applyAnimation(video.currentFrame);
+
+                console.log(anim.animationType)
+                if (anim.animationType == 0) {
+                    object.style.forEach((style) => {
+                        if (style.attribute == StyleProperties.opacity) {
+                            if (progress <= 1) {
+                            style.value = progress;
+                            console.log(progress * 100);
+                            console.log(`Switchmas ${style.value}`);
+                            object.render(video.currentFrame);
+                            updateSidebar();
+                        }
+                    }
+                    });
+            }
+        });
+        object.render(video.currentFrame);
+    });
 }
 
 setInterval(() => {
     if (video.currentFrame < video.totalFrames) {
         if (!video.paused) {
-            sceneObjects.forEach((object) => {
-                object.render(video.currentFrame);
-            });
+            renderEverything()
             timelineObject.style.left = `${
                 5 + (video.currentFrame / video.totalFrames) * 85
             }%`;
@@ -398,7 +458,7 @@ document.addEventListener("keydown", (e) => {
     if (e.code === "ArrowLeft") {
         video.paused = true;
         video.currentFrame = Math.max(0, video.currentFrame - 1);
-        sceneObjects.forEach((object) => object.render(video.currentFrame));
+        renderEverything()
         timelineObject.style.left = `${
             5 + (video.currentFrame / video.totalFrames) * 85
         }%`;
@@ -409,7 +469,7 @@ document.addEventListener("keydown", (e) => {
             video.totalFrames - 1,
             video.currentFrame + 1
         );
-        sceneObjects.forEach((object) => object.render(video.currentFrame));
+        renderEverything()
         timelineObject.style.left = `${
             5 + (video.currentFrame / video.totalFrames) * 85
         }%`;

@@ -1,4 +1,4 @@
-import { Animation } from "./Animation";
+import { Animations } from "./Animations";
 import { Error } from "./Error";
 import { Lifecycle } from "./Lifecycle";
 import { Renderable } from "./Renderable";
@@ -7,7 +7,7 @@ import { Style } from "./Style";
 export abstract class TriadObject {
     lifespan: Lifecycle;
     renderable: Renderable;
-    animation: Animation;
+    animation: Animations;
     style: Array<Style>;
     renderTo: Element; // Content screen
     instance: HTMLElement | null;
@@ -15,7 +15,7 @@ export abstract class TriadObject {
     constructor(
         _lifespan: Lifecycle,
         _renderable: Renderable,
-        _animation: Animation,
+        _animation: Animations,
         _renderTo: Element,
         _style: Array<Style>
     ) {

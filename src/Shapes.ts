@@ -3,6 +3,7 @@ import { Error } from "./Error";
 import { StyleProperties } from "./Style";
 import { TriadObject } from "./TriadObject";
 import { Vector2 } from "./Vector2";
+import { AnimationType } from "./Animation";
 
 export class Rectangle extends TriadObject {
     instantiate(): Error {
@@ -40,10 +41,6 @@ export class Rectangle extends TriadObject {
             if (!this.isVisible(currentFrame)) {
                 this.instance.style.display = "none";
             } else {
-                this.instance.style.display = "block";
-                this.instance.style.width = `${this.renderable.dimensions.x}px`;
-                this.instance.style.height = `${this.renderable.dimensions.y}px`;
-    
                 const playbackRect = this.renderTo.getBoundingClientRect();
                 const centerX = playbackRect.width / 2;
                 const centerY = playbackRect.height / 2;
