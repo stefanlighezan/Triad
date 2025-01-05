@@ -1,0 +1,222 @@
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    background-color: #222222;
+    color: #ffffff;
+}
+
+#tools {
+    display: flex;
+    width: 100%;
+    height: 3%;
+    background-color: #444444;
+    align-items: start;
+    justify-content: left;
+}
+
+#tools * {
+    border: 0.1px solid #888888;
+    margin-left: 4px;
+    user-select: none;
+    color: #ffffff;
+    background-color: #444444;
+}
+
+#content {
+    width: 100%;
+    height: 87%;
+    background-color: #222222;
+}
+
+/* Remove any default list styling */
+.sidebar .style-container {
+    list-style-type: none; /* Prevent list numbering or bullet points */
+    margin: 10px 0; /* Optional: space out each style input */
+}
+
+/* Ensure label and input elements are styled properly */
+.sidebar label {
+    display: block; /* Make sure the label is on its own line */
+    margin-bottom: 5px; /* Space between label and input */
+    font-weight: bold; /* Optional: Make label bold */
+}
+
+.sidebar input {
+    width: 100%; /* Make input elements fill the available width */
+    margin-top: 5px;
+}
+
+#timeline {
+    position: relative;
+    width: 100%;
+    z-index: 4;
+    height: 10%;
+    background-color: #444444;
+}
+
+#pauseButton {
+    position: absolute;
+    float: left;
+    transform: translate(0, 12.5%);
+    width: 50px; /* Initial size */
+    height: 50px; /* Initial size */
+    background-color: #ff0000; /* Red color for the pause button */
+    border-radius: 50%; /* Make it a circle */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border: 2px solid #ffffff;
+    transition: width 0.2s ease, height 0.2s ease; /* Smooth scaling effect */
+}
+
+#durationRod {
+    position: relative;
+    width: 90%;
+    height: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: auto;
+    background-color: #888888;
+    border-radius: 25px;
+    overflow: hidden;
+}
+
+#currentPosition {
+    position: absolute;
+    width: 5%;
+    height: 90%;
+    top: 50%;
+    left: 5%;
+    transform: translate(0, -50%);
+    background-color: #eff243;
+    cursor: grab;
+}
+
+#currentPosition:active {
+    cursor: grabbing;
+}
+
+#playback {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    background-color: #111111;
+}
+
+#itemCatalog {
+    width: 90%;
+    height: 90%;
+    background-color: #222222;
+    border: 1px solid #444444;
+    display: block;
+    margin: 0;
+    padding: 0;
+    display: none;
+}
+
+#searchBar {
+    width: 100%;
+    text-align: center;
+    height: 10%;
+    font-size: 100%;
+    background-color: #222222;
+    border: 1.5px solid yellow;
+    margin: 0;
+    padding: 0;
+    color: white;
+}
+
+#objectList {
+    width: 100%;
+    height: 100%;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    text-transform: capitalize;
+}
+
+#objectList li {
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding-bottom: 4px;
+    background-color: #444444;
+}
+
+#objectList li:hover {
+    background-color: #555555;
+}
+
+#playback {
+    position: relative;
+    width: 100%; /* Ensure it scales with the window */
+    height: 100%; /* Ensure it scales with the window */
+    overflow: hidden; /* Keep objects within bounds */
+    background-color: #f0f0f0; /* Optional for visibility */
+}
+
+.rectangle {
+    position: absolute;
+    background-color: #3498db;
+    transform: translate(-50%, -50%); /* Center to its coordinates */
+}
+
+#sidebar {
+    position: fixed;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 20%;
+    background-color: #333333;
+    border-left: 1px solid #444444;
+    overflow: hidden;
+    z-index: 1;
+    transition: width 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+}
+
+#sidebar.collapsed {
+    width: 25px;
+}
+
+#sidebar.collapsed input {
+    display: none;
+}
+
+#sidebar.collapsed h3 {
+    display: none;
+}
+
+#sidebarToggle {
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    width: 20px;
+    height: 40px;
+    background-color: #444444;
+    color: #000000;
+    text-align: center;
+    line-height: 40px;
+    font-size: 16px;
+    cursor: pointer;
+    border: 1px solid #555555;
+    border-radius: 4px 0 0 4px;
+}
+
+#sidebar * {
+    margin: 10px 0;
+    color: #000000;
+    text-align: center;
+}

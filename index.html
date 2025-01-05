@@ -1,0 +1,40 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="root">
+      <nav id="tools">
+        <div id="fullscreen">Fullscreen</div>
+        <div id="addItem">Add Item</div>
+      </nav>
+      <div id="content">
+        <div id="playback">
+          <div id="itemCatalog">
+            <input
+              type="text"
+              spellcheck="false"
+              autocomplete="off"
+              placeholder="Find Object"
+              id="searchBar"
+            />
+            <ul id="objectList"></ul>
+          </div>
+        </div>
+      </div>
+      <div id="timeline">
+        <div id="pauseButton">▶️</div>
+        <div id="durationRod"></div>
+        <div id="currentPosition"></div>
+      </div>
+      <div id="sidebar">
+        <div id="sidebarToggle">⮜</div>
+      </div>
+    </div>
+
+    <script src="script.js" type="module"></script>
+  </body>
+</html>

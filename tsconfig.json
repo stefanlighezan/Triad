@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "es6",               // Transpile to ES6 JavaScript
+    "module": "es6",               // Use ES6 modules
+    "outDir": "./dist",            // Output directory for transpiled files
+    "rootDir": "./src",            // Input directory for TypeScript files
+    "strict": true                 // Enable strict type-checking
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}
