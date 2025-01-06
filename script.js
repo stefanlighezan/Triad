@@ -27,6 +27,7 @@ const playback = document.getElementById("playback");
 const sidebar = document.getElementById("sidebar");
 const sidebarToggle = document.getElementById("sidebarToggle");
 const pauseButtonToggle = document.getElementById("pauseButton");
+const settings = document.getElementById("settings");
 
 const setup = { duration: 3, paused: false, fps: 24 };
 const video = new Video(setup.duration, setup.paused, setup.fps);
@@ -35,6 +36,64 @@ const timeline = new Timeline(
     video.currentFrame,
     video.totalFrames
 );
+
+settings.addEventListener("click", () => {
+    sidebar.innerHTML = "";
+    let videoPropertiesPanel = document.getElementById("videoPropertiesPanel");
+
+    if (!videoPropertiesPanel) {
+        videoPropertiesPanel = document.createElement("div");
+        videoPropertiesPanel.id = "videoPropertiesPanel";
+        videoPropertiesPanel.innerHTML = "<h3>Video Properties</h3>";
+
+        const hr = document.createElement("hr");
+
+        const durationLabel = document.createElement("label");
+        durationLabel.textContent = "Video Duration (in seconds): ";
+        const durationInput = document.createElement("input");
+        durationInput.type = "number";
+        durationInput.value = setup.duration;
+        durationInput.addEventListener("input", (e) => {
+            setup.duration = parseFloat(e.target.value);
+            video.totalFrames = video.fps * setup.duration;
+            renderEverything();
+        });
+        durationLabel.appendChild(durationInput);
+        videoPropertiesPanel.appendChild(durationLabel);
+
+        videoPropertiesPanel.appendChild(hr);
+
+        const fpsLabel = document.createElement("label");
+        fpsLabel.textContent = "Frames per second (FPS): ";
+        const fpsInput = document.createElement("input");
+        fpsInput.type = "number";
+        fpsInput.value = setup.fps;
+        fpsInput.addEventListener("input", (e) => {
+            setup.fps = parseInt(e.target.value, 10);
+            video.fps = setup.fps;
+            clearInterval(interval);
+            interval = setInterval(() => {
+                if (video.currentFrame - 1 < video.totalFrames) {
+                    if (!video.paused) {
+                        renderEverything();
+                        timelineObject.style.left = `${
+                            5 + (video.currentFrame / video.totalFrames) * 85
+                        }%`;
+                        timelineObject.textContent = video.currentFrame;
+                        video.currentFrame++;
+                    }
+                }
+            }, 1000 / video.fps);
+            renderEverything();
+        });
+        fpsLabel.appendChild(fpsInput);
+        videoPropertiesPanel.appendChild(fpsLabel);
+
+        sidebar.appendChild(videoPropertiesPanel);
+    } else {
+        videoPropertiesPanel.classList.toggle("hidden");
+    }
+});
 
 let sceneObjects = [];
 let selectedObject = null;
@@ -119,6 +178,22 @@ function instantiateTriadObject(key) {
             selectedObject = triadObject;
             updateSidebar();
         });
+
+        triadObject.instance.addEventListener("dblclick", () => {
+            const index = sceneObjects.indexOf(triadObject);
+            if (index !== -1) {
+                sceneObjects.splice(index, 1);
+            }
+
+            triadObject.instance.remove();
+
+            if (selectedObject === triadObject) {
+                selectedObject = null;
+                updateSidebar();
+            }
+
+            renderEverything();
+        });
         updateSidebar();
     }
 }
@@ -126,7 +201,9 @@ function instantiateTriadObject(key) {
 function updateSidebar() {
     if (!selectedObject) return;
 
-    const sidebarToggleClone = sidebar.querySelector("#sidebarToggle");
+    const sidebarToggleClone =
+        sidebar.querySelector("#sidebarToggle") ||
+        sidebarToggle.cloneNode(true);
     sidebar.innerHTML = "<h3>Object Properties</h3>";
     sidebar.appendChild(sidebarToggleClone);
 
@@ -343,7 +420,6 @@ function renderAnimationList() {
 
 function renderEverything() {
     sceneObjects.forEach((object) => {
-        // Reset dimensions to initial state before applying animations
         object.renderable.dimensions = new Vector2(
             object.renderable.initialDimensions.x,
             object.renderable.initialDimensions.y
@@ -379,7 +455,6 @@ function renderEverything() {
                     );
                 }
             } else if (progress > 1 && anim.animationType == 2) {
-                // Persist final scale after animation ends
                 const scaleFactorX =
                     object.renderable.initialDimensions.x * anim.other;
                 const scaleFactorY =
@@ -396,9 +471,7 @@ function renderEverything() {
     });
 }
 
-
-
-setInterval(() => {
+let interval = setInterval(() => {
     if (video.currentFrame - 1 < video.totalFrames) {
         if (!video.paused) {
             renderEverything();
