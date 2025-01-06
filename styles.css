@@ -202,43 +202,24 @@ body {
     display: none;
 }
 
-#sidebar.collapsed label {
-    display: none;
-}
-
-#sidebar.collapsed hr {
-    display: none;
-}
-
-
-
-
-.sidebar label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #c9d1d9;
-    width: 100%;
-}
-
-.sidebar input {
-    width: 100%;
-    margin-top: 5px;
-    background-color: #161b22;
-    color: #c9d1d9;
-    border: 1px solid #30363d;
-    padding: 5px;
-    box-sizing: border-box;
-}
-
-.sidebar .style-container {
-    list-style-type: none;
-    margin: 10px 0;
-    width: 100%;
-}
-
-.sidebar input:focus {
-    outline: none;
-    border-color: #58a6ff;
+#sidebarToggle {
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    width: 20px;
+    height: 40px;
     background-color: #21262d;
+    color: #c9d1d9;
+    text-align: center;
+    line-height: 40px;
+    font-size: 16px;
+    cursor: pointer;
+    border: 1px solid #30363d;
+    border-radius: 4px 0 0 4px;
+}
+
+#sidebar * {
+    margin: 10px 0;
+    color: #c9d1d9;
+    text-align: center;
 }

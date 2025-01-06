@@ -30,7 +30,7 @@ export abstract class TriadObject {
     isVisible(currentFrame: number): boolean {
         return (
             currentFrame >= this.lifespan.start &&
-            currentFrame <= this.lifespan.end
+            currentFrame - 1 <= this.lifespan.end
         );
     }
 
