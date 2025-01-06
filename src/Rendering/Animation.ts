@@ -8,12 +8,10 @@ export abstract class Animation {
         _start: number,
         _duration: number,
         _animationType: number,
-        _other: any
     ) {
         this.start = _start;
         this.duration = _duration;
         this.animationType = _animationType;
-        this.other = _other;
     }
 
     applyAnimation(currentFrame: number) {
@@ -34,7 +32,6 @@ export enum AnimationType {
     fadeIn,
     fadeOut,
     scale,
-    shrink,
     rotX,
     rotY,
     rotZ,

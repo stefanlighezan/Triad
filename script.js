@@ -268,7 +268,7 @@ function updateSidebar() {
         sidebar.appendChild(container);
     });
 
-    renderAnimationList()
+    renderAnimationList();
 }
 
 function renderAnimationList() {
@@ -293,7 +293,7 @@ function renderAnimationList() {
     addAnimationButton.addEventListener("click", () => {
         const newAnimation = new Animation(0, 5, selectAnimation.value);
         selectedObject.animation.animations.push(newAnimation);
-        renderAnimationList(); // Refresh the animation list
+        renderAnimationList();
     });
 
     animationDiv.appendChild(addAnimationButton);
@@ -305,7 +305,7 @@ function renderAnimationList() {
         const startInput = document.createElement("input");
         startInput.type = "number";
         startInput.value = anim.start;
-        startInput.placeholder = `Start Frame (1 sec = ${video.fps}fps)`
+        startInput.placeholder = `Start Frame (1 sec = ${video.fps}fps)`;
         startInput.addEventListener("input", (e) => {
             anim.start = parseInt(e.target.value, 10);
         });
@@ -313,14 +313,23 @@ function renderAnimationList() {
         const durationInput = document.createElement("input");
         durationInput.type = "number";
         durationInput.value = anim.duration;
-        durationInput.placeholder = "Duration (in frames)"
+        durationInput.placeholder = "Duration (in frames)";
         durationInput.addEventListener("input", (e) => {
             anim.duration = parseInt(e.target.value, 10);
         });
 
+        const otherInput = document.createElement("input");
+        otherInput.type = "number";
+        otherInput.value = anim.duration;
+        otherInput.placeholder = "Other attribute (read documentation)";
+        otherInput.addEventListener("input", (e) => {
+            anim.other = parseInt(e.target.value, 10);
+        });
+
+
         animDiv.appendChild(startInput);
         animDiv.appendChild(durationInput);
-
+        animDiv.appendChild(otherInput);
         animationDiv.appendChild(animDiv);
     });
 
@@ -354,6 +363,23 @@ function renderEverything() {
                             updateSidebar();
                         }
                     });
+                } else if (anim.animationType == 2) {
+                    //scale
+                    if (progress <= 1 && progress >= 0) {
+                        console.log("here")
+                        let initialSize = object.renderable.initialDimensions;
+                        console.log("OG SIZE")
+                        console.log(initialSize)
+                        let currentSize = object.renderable.dimensions;
+                        let scaleFactor = progress * anim.other;
+                        currentSize.x *= scaleFactor;
+                        currentSize.y *= scaleFactor;
+                        object.renderable.dimensions = currentSize;
+                        console.log(initialSize)
+                        object.render(video.currentFrame);
+                    } else {
+                        object.renderable.initialDimensions = object.renderable.dimensions;
+                    }
                 }
             }
         });
@@ -368,7 +394,7 @@ setInterval(() => {
             timelineObject.style.left = `${
                 5 + (video.currentFrame / video.totalFrames) * 85
             }%`;
-            timelineObject.textContent = video.currentFrame
+            timelineObject.textContent = video.currentFrame;
             video.currentFrame++;
         }
     }
@@ -395,7 +421,7 @@ document.addEventListener("mousemove", (e) => {
         timelineObject.style.left = `${positionPercent * 100}%`;
         timeline.updateCurrentFrame((positionPercent - 0.05) / 0.85);
         video.currentFrame = timeline.currentFrame;
-        timelineObject.textContent = video.currentFrame
+        timelineObject.textContent = video.currentFrame;
     }
 });
 
@@ -473,7 +499,7 @@ document.addEventListener("keydown", (e) => {
         timelineObject.style.left = `${
             5 + (video.currentFrame / video.totalFrames) * 85
         }%`;
-        timelineObject.textContent = video.currentFrame
+        timelineObject.textContent = video.currentFrame;
     }
     if (e.code === "ArrowRight") {
         video.paused = true;
@@ -485,6 +511,6 @@ document.addEventListener("keydown", (e) => {
         timelineObject.style.left = `${
             5 + (video.currentFrame / video.totalFrames) * 85
         }%`;
-        timelineObject.textContent = video.currentFrame
+        timelineObject.textContent = video.currentFrame;
     }
 });
