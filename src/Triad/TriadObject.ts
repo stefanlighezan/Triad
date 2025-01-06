@@ -1,8 +1,8 @@
-import { Animations } from "./Animations";
-import { Error } from "./Error";
+import { Animations } from "../Rendering/Animations";
+import { Error } from "../DataTypes/Error";
 import { Lifecycle } from "./Lifecycle";
-import { Renderable } from "./Renderable";
-import { Style } from "./Style";
+import { Renderable } from "../Rendering/Renderable";
+import { Style } from "../Rendering/Style";
 
 export abstract class TriadObject {
     lifespan: Lifecycle;

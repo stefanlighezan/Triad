@@ -1,5 +1,5 @@
-import { Objects } from "./TriadObject";
-import { Vector2 } from "./Vector2";
+import { Objects } from "../Triad/TriadObject";
+import { Vector2 } from "../DataTypes/Vector2";
 
 export class Renderable {
     position: Vector2;

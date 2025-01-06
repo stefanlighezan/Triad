@@ -1,12 +1,12 @@
-import { Timeline } from "./dist/Timeline.js";
-import { Video } from "./dist/Video.js";
-import { Objects, TriadObject } from "./dist/TriadObject.js";
-import { Animations } from "./dist/Animations.js";
-import { Animation, AnimationType } from "./dist/Animation.js";
-import { Renderable } from "./dist/Renderable.js";
-import { Vector2 } from "./dist/Vector2.js";
-import { Rectangle, Ellipse } from "./dist/Shapes.js";
-import { Lifecycle } from "./dist/Lifecycle.js";
+import { Timeline } from "./dist/Triad/Timeline.js";
+import { Video } from "./dist/Triad/Video.js";
+import { Objects, TriadObject } from "./dist/Triad/TriadObject.js";
+import { Animations } from "./dist/Rendering/Animations.js";
+import { Animation, AnimationType } from "./dist/Rendering/Animation.js";
+import { Renderable } from "./dist/Rendering/Renderable.js";
+import { Vector2 } from "./dist/DataTypes/Vector2.js";
+import { Rectangle, Ellipse } from "./dist/Rendering/Shapes.js";
+import { Lifecycle } from "./dist/Triad/Lifecycle.js";
 import {
     BorderColor,
     FillColor,
@@ -16,7 +16,7 @@ import {
     rotZ,
     StyleProperties,
     zIndex,
-} from "./dist/Style.js";
+} from "./dist/Rendering/Style.js";
 
 const timelineObject = document.getElementById("currentPosition");
 const durationRod = document.getElementById("durationRod");
@@ -268,14 +268,17 @@ function updateSidebar() {
         sidebar.appendChild(container);
     });
 
+    renderAnimationList()
+}
+
+function renderAnimationList() {
     const animationDiv = document.createElement("div");
-    const animationDivTitle = document.createElement("h4");
-    animationDivTitle.textContent = "Animations";
+    animationDiv.id = "animation-list";
+    animationDiv.innerHTML = "<h4>Animations</h4>";
 
     const selectAnimation = document.createElement("select");
     Object.keys(AnimationType).forEach((key) => {
         if (isNaN(Number(key))) {
-            // Skip numeric keys
             const option = document.createElement("option");
             option.value = AnimationType[key];
             option.textContent = key;
@@ -283,69 +286,75 @@ function updateSidebar() {
         }
     });
 
-    animationDiv.appendChild(animationDivTitle);
     animationDiv.appendChild(selectAnimation);
-    sidebar.appendChild(animationDiv);
 
-    // Add "Add Animation" button
     const addAnimationButton = document.createElement("button");
     addAnimationButton.textContent = "Add Animation";
     addAnimationButton.addEventListener("click", () => {
         const newAnimation = new Animation(0, 5, selectAnimation.value);
         selectedObject.animation.animations.push(newAnimation);
-
-        // Add new animation properties to the sidebar
-        const animationPropertiesDiv = document.createElement("div");
-
-        const animationTitleText = document.createElement("h4");
-        animationTitleText.textContent = `Animation #${
-            selectedObject.animation.animations.length - 1
-        }`;
-
-        const animationStartInput = document.createElement("input");
-        animationStartInput.type = "number";
-        animationStartInput.placeholder = "Start Time";
-        animationStartInput.value = newAnimation.start;
-        animationStartInput.addEventListener("input", (e) => {
-            newAnimation.start = e.target.value;
-        });
-
-        const animationDurationInput = document.createElement("input");
-        animationDurationInput.type = "number";
-        animationDurationInput.placeholder = "Duration";
-        animationDurationInput.value = newAnimation.duration;
-        animationDurationInput.addEventListener("input", (e) => {
-            newAnimation.duration = parseInt(e.target.value, 10);
-        });
-
-        animationPropertiesDiv.appendChild(animationTitleText);
-
-        animationPropertiesDiv.appendChild(animationDurationInput);
-        animationPropertiesDiv.appendChild(animationStartInput);
-        sidebar.appendChild(animationPropertiesDiv);
+        renderAnimationList(); // Refresh the animation list
     });
 
-    sidebar.appendChild(addAnimationButton);
+    animationDiv.appendChild(addAnimationButton);
+
+    selectedObject.animation.animations.forEach((anim, index) => {
+        const animDiv = document.createElement("div");
+        animDiv.innerHTML = `<h5>Animation #${index}</h5>`;
+
+        const startInput = document.createElement("input");
+        startInput.type = "number";
+        startInput.value = anim.start;
+        startInput.placeholder = `Start Frame (1 sec = ${video.fps}fps)`
+        startInput.addEventListener("input", (e) => {
+            anim.start = parseInt(e.target.value, 10);
+        });
+
+        const durationInput = document.createElement("input");
+        durationInput.type = "number";
+        durationInput.value = anim.duration;
+        durationInput.placeholder = "Duration (in frames)"
+        durationInput.addEventListener("input", (e) => {
+            anim.duration = parseInt(e.target.value, 10);
+        });
+
+        animDiv.appendChild(startInput);
+        animDiv.appendChild(durationInput);
+
+        animationDiv.appendChild(animDiv);
+    });
+
+    const existingAnimationDiv = sidebar.querySelector("#animation-list");
+    if (existingAnimationDiv) {
+        sidebar.replaceChild(animationDiv, existingAnimationDiv);
+    } else {
+        sidebar.appendChild(animationDiv);
+    }
 }
 
-function renderEverything () {
+function renderEverything() {
     sceneObjects.forEach((object) => {
         object.animation.animations.forEach((anim) => {
             const progress = anim.applyAnimation(video.currentFrame);
 
-                console.log(anim.animationType)
+            if (progress <= 1 && progress >= 0) {
                 if (anim.animationType == 0) {
                     object.style.forEach((style) => {
                         if (style.attribute == StyleProperties.opacity) {
-                            if (progress <= 1) {
                             style.value = progress;
-                            console.log(progress * 100);
-                            console.log(`Switchmas ${style.value}`);
                             object.render(video.currentFrame);
                             updateSidebar();
                         }
-                    }
                     });
+                } else if (anim.animationType == 1) {
+                    object.style.forEach((style) => {
+                        if (style.attribute == StyleProperties.opacity) {
+                            style.value = 1 - progress;
+                            object.render(video.currentFrame);
+                            updateSidebar();
+                        }
+                    });
+                }
             }
         });
         object.render(video.currentFrame);
@@ -353,12 +362,13 @@ function renderEverything () {
 }
 
 setInterval(() => {
-    if (video.currentFrame < video.totalFrames) {
+    if (video.currentFrame - 1 < video.totalFrames) {
         if (!video.paused) {
-            renderEverything()
+            renderEverything();
             timelineObject.style.left = `${
                 5 + (video.currentFrame / video.totalFrames) * 85
             }%`;
+            timelineObject.textContent = video.currentFrame
             video.currentFrame++;
         }
     }
@@ -385,6 +395,7 @@ document.addEventListener("mousemove", (e) => {
         timelineObject.style.left = `${positionPercent * 100}%`;
         timeline.updateCurrentFrame((positionPercent - 0.05) / 0.85);
         video.currentFrame = timeline.currentFrame;
+        timelineObject.textContent = video.currentFrame
     }
 });
 
@@ -458,20 +469,22 @@ document.addEventListener("keydown", (e) => {
     if (e.code === "ArrowLeft") {
         video.paused = true;
         video.currentFrame = Math.max(0, video.currentFrame - 1);
-        renderEverything()
+        renderEverything();
         timelineObject.style.left = `${
             5 + (video.currentFrame / video.totalFrames) * 85
         }%`;
+        timelineObject.textContent = video.currentFrame
     }
     if (e.code === "ArrowRight") {
         video.paused = true;
         video.currentFrame = Math.min(
-            video.totalFrames - 1,
+            video.totalFrames,
             video.currentFrame + 1
         );
-        renderEverything()
+        renderEverything();
         timelineObject.style.left = `${
             5 + (video.currentFrame / video.totalFrames) * 85
         }%`;
+        timelineObject.textContent = video.currentFrame
     }
 });

@@ -1,8 +1,8 @@
-import { ClearError, NullExceptionError } from "./Error";
-import { Error } from "./Error";
+import { ClearError, NullExceptionError } from "../DataTypes/Error";
+import { Error } from "../DataTypes/Error";
 import { StyleProperties } from "./Style";
-import { TriadObject } from "./TriadObject";
-import { Vector2 } from "./Vector2";
+import { TriadObject } from "../Triad/TriadObject";
+import { Vector2 } from "../DataTypes/Vector2";
 import { AnimationType } from "./Animation";
 
 export class Rectangle extends TriadObject {
