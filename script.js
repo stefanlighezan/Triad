@@ -27,6 +27,7 @@ const playback = document.getElementById("playback");
 const sidebar = document.getElementById("sidebar");
 const sidebarToggle = document.getElementById("sidebarToggle");
 const pauseButtonToggle = document.getElementById("pauseButton");
+const changeVideoProperties = document.getElementById("changeVideoProperties");
 
 const setup = { duration: 3, paused: false, fps: 24 };
 const video = new Video(setup.duration, setup.paused, setup.fps);
@@ -41,6 +42,62 @@ let selectedObject = null;
 
 let isDraggingObject = false;
 let dragOffset = { x: 0, y: 0 };
+
+changeVideoProperties.addEventListener("click", () => {
+    let videoPropertiesPanel = sidebar.querySelector("#videoPropertiesPanel");
+
+    if (!videoPropertiesPanel) {
+        videoPropertiesPanel = document.createElement("div");
+        videoPropertiesPanel.id = "videoPropertiesPanel";
+        videoPropertiesPanel.innerHTML = "<h3>Video Properties</h3>";
+
+        const durationLabel = document.createElement("label");
+        durationLabel.textContent = "Video Duration (in seconds): ";
+        const durationInput = document.createElement("input");
+        const breakElement = document.createElement("hr");
+        durationInput.type = "number";
+        durationInput.value = setup.duration;
+        durationInput.addEventListener("input", (e) => {
+            setup.duration = parseFloat(e.target.value);
+            video.totalFrames = video.fps * setup.duration;
+            renderEverything();
+        });
+        durationLabel.appendChild(durationInput);
+        videoPropertiesPanel.appendChild(durationLabel);
+        videoPropertiesPanel.appendChild(breakElement);
+
+        const fpsLabel = document.createElement("label");
+        fpsLabel.textContent = "Frames per second (FPS): ";
+        const fpsInput = document.createElement("input");
+        fpsInput.type = "number";
+        fpsInput.value = setup.fps;
+        fpsInput.addEventListener("input", (e) => {
+            setup.fps = parseInt(e.target.value, 10);
+            video.fps = setup.fps;
+            clearInterval(interval);
+            interval = setInterval(() => {
+                if (video.currentFrame - 1 < video.totalFrames) {
+                    if (!video.paused) {
+                        renderEverything();
+                        timelineObject.style.left = `${
+                            5 + (video.currentFrame / video.totalFrames) * 85
+                        }%`;
+                        timelineObject.textContent = video.currentFrame;
+                        video.currentFrame++;
+                    }
+                }
+            }, 1000 / video.fps);
+            renderEverything();
+        });
+        fpsLabel.appendChild(fpsInput);
+        videoPropertiesPanel.appendChild(fpsLabel);
+
+        sidebar.appendChild(videoPropertiesPanel);
+    } else {
+        videoPropertiesPanel.style.display =
+            videoPropertiesPanel.style.display === "none" ? "block" : "none";
+    }
+});
 
 function instantiateTriadObject(key) {
     let lifecycle = new Lifecycle(0, video.totalFrames);
@@ -326,7 +383,6 @@ function renderAnimationList() {
             anim.other = parseInt(e.target.value, 10);
         });
 
-
         animDiv.appendChild(startInput);
         animDiv.appendChild(durationInput);
         animDiv.appendChild(otherInput);
@@ -364,21 +420,21 @@ function renderEverything() {
                         }
                     });
                 } else if (anim.animationType == 2) {
-                    //scale
                     if (progress <= 1 && progress >= 0) {
-                        console.log("here")
+                        console.log("here");
                         let initialSize = object.renderable.initialDimensions;
-                        console.log("OG SIZE")
-                        console.log(initialSize)
+                        console.log("OG SIZE");
+                        console.log(initialSize);
                         let currentSize = object.renderable.dimensions;
                         let scaleFactor = progress * anim.other;
                         currentSize.x *= scaleFactor;
                         currentSize.y *= scaleFactor;
                         object.renderable.dimensions = currentSize;
-                        console.log(initialSize)
+                        console.log(initialSize);
                         object.render(video.currentFrame);
                     } else {
-                        object.renderable.initialDimensions = object.renderable.dimensions;
+                        object.renderable.initialDimensions =
+                            object.renderable.dimensions;
                     }
                 }
             }
@@ -387,7 +443,7 @@ function renderEverything() {
     });
 }
 
-setInterval(() => {
+let interval = setInterval(() => {
     if (video.currentFrame - 1 < video.totalFrames) {
         if (!video.paused) {
             renderEverything();
